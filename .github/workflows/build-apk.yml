@@ -1,0 +1,53 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.22.x'
+
+      - name: Generate platform folders + Build APK + AAB
+        run: |
+          if [ -f pubspec.yaml ]; then APP_DIR=.; else APP_DIR=hr_app; fi
+          echo "APP_DIR=$APP_DIR"
+          cd $APP_DIR
+          flutter create --platforms=android --project-name hr_company_app --org com.company.hr .
+
+          echo "--- Fix Kotlin 1.7.1 -> 1.9.22 ---"
+          if [ -f android/settings.gradle ]; then
+            sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.9.22"/g' android/settings.gradle
+          fi
+          if [ -f android/build.gradle ]; then
+            sed -i "s/ext.kotlin_version.*/ext.kotlin_version = '1.9.22'/g" android/build.gradle
+          fi
+
+          flutter pub get
+          flutter analyze || true
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hr-app-apk
+          path: '**/build/app/outputs/flutter-apk/app-release.apk'
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: hr-app-aab
+          path: '**/build/app/outputs/bundle/release/app-release.aab'
