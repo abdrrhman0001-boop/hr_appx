@@ -1,0 +1,33 @@
+name: hr_company_app
+description: تطبيق الموارد البشرية - شركة [اسم الشركة] - iOS & Android (Flutter, RTL, AR/FR/EN)
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  provider: ^6.1.2
+  shared_preferences: ^2.2.3
+  local_auth: ^2.1.7
+  intl: ^0.19.0
+  dio: ^5.4.0
+  pdf: ^3.10.7
+  printing: ^5.12.0
+  file_picker: ^8.0.0
+  geolocator: ^11.0.0
+  qr_code_scanner: ^1.0.1
+  google_fonts: ^6.1.0
+  flutter_secure_storage: ^9.0.0
+  connectivity_plus: ^5.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
